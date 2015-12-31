@@ -66,14 +66,20 @@ graphPromise = graphPromise.then (rootNode) ->
   Query = require '../src/Query'
 
   q = new Query(rootNode)
-  rootTagFilter = q.filter( (properties) -> properties.tags? && properties.tags.indexOf("rootTag") >= 0 )
-  tagAFilter = rootTagFilter.filter( (properties) -> properties.tags? && properties.tags.indexOf("a") >= 0 )
+
+  # we could use q.filter(callback) for arbitrary queries, but use helper functions here
+  rootTagFilter = q.whereContains('tags', 'rootTag')
+  tagAFilter = rootTagFilter.whereContains('tags', 'a')
+  mdFilter = q.withProperty('markdown')
 
   leaves = rootTagFilter.resultLeaves()
   console.log "When merging properties, there are #{leaves.length} nodes that have the 'rootTag' tag"
 
   leaves = tagAFilter.resultLeaves()
   console.log "When merging properties, there are #{leaves.length} nodes that have both the 'rootTag' and 'a' tags"
+
+  leaves = mdFilter.resultLeaves()
+  console.log "When merging properties, there are #{leaves.length} nodes that have a 'markdown' property"
 
 # 4.) Catch errors
 graphPromise.catch (error) ->

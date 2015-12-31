@@ -71,6 +71,48 @@ describe 'Query', ->
     expect(nodeStructs[0].node.uid).to.equal(2)
     expect(nodeStructs[1].node.uid).to.equal(3)
 
+  it 'should filter with whereContains correctly', ->
+    node0 = { properties: { tags: ['a', 'b'] }, children: [], uid: 0 }
+    node1 = { properties: { tags: ['a', 'c'], basicProperty: 'basicValue' }, children: [], uid: 1 }
+    node2 = { properties: { tags: ['d', 'e'], object: { objKey: true } }, children: [], uid: 2 }
+
+    q = new Query([node0,node1,node2])
+
+    # Containment in arrays
+    expect(q.whereContains('tags','a').resultNodes().length).to.equal(2)
+    expect(q.whereContains('tags','a').resultNodes()[0].uid).to.equal(0)
+    expect(q.whereContains('tags','a').resultNodes()[1].uid).to.equal(1)
+
+    expect(q.whereContains('tags','e').resultNodes().length).to.equal(1)
+    expect(q.whereContains('tags','e').resultNodes()[0].uid).to.equal(2)
+
+    expect(q.whereContains('tags','a').whereContains('tags','c').resultNodes().length).to.equal(1)
+    expect(q.whereContains('tags','a').whereContains('tags','c').resultNodes()[0].uid).to.equal(1)
+
+    # Keys in objects
+    expect(q.whereContains('object', 'objKey').resultNodes().length).to.equal(1)
+    expect(q.whereContains('object', 'objKey').resultNodes()[0].uid).to.equal(2)
+
+    # Equality check as fallback for simple objects
+    expect(q.whereContains('basicProperty', 'basicValue').resultNodes().length).to.equal(1)
+    expect(q.whereContains('basicProperty', 'basicValue').resultNodes()[0].uid).to.equal(1)
+
+  it 'should filter with withProperty correctly', ->
+    node0 = { properties: { a: 'va' }, children: [], uid: 0 }
+    node1 = { properties: { a: 'va2', b: 'vb' }, children: [], uid: 1 }
+
+    q = new Query([node0, node1])
+
+    expect(q.withProperty('a').resultNodes().length).to.eql(2)
+    expect(q.withProperty('a').resultNodes()[0].uid).to.eql(0)
+    expect(q.withProperty('a').resultNodes()[1].uid).to.eql(1)
+
+    expect(q.withProperty('a', 'va').resultNodes().length).to.eql(1)
+    expect(q.withProperty('a', 'va').resultNodes()[0].uid).to.eql(0)
+
+    expect(q.withProperty('b').resultNodes().length).to.eql(1)
+    expect(q.withProperty('b').resultNodes()[0].uid).to.eql(1)
+
 # Helper function with a basic query that can be re-used
 basicQuery = ->
   r0 = new TreeNode()

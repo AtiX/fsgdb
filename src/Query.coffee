@@ -42,6 +42,35 @@ module.exports = class Query
     return new Query(matchingNodes, newFilterChain)
 
   ##
+  # Filters for all nodes that have a certain property. If a value is given, the property is checked
+  # for this value as well.
+  # (Wraps Query.filter)
+  withProperty: (propertyName, value) =>
+    return @filter (properties) ->
+      if value?
+        return properties[propertyName]? and properties[propertyName] == value
+      else
+        return properties[propertyName]?
+
+  ##
+  # Filters for all nodes where the specific property exists and contains the specified entry (array) or key (object)
+  # (Wraps Query.filter)
+  whereContains: (propertyName, containedValue) =>
+    return @filter (properties) ->
+      if not properties[propertyName]?
+        return false
+
+      property = properties[propertyName]
+
+      if underscore.isArray(property)
+        return property.indexOf(containedValue) >= 0
+      else if underscore.isObject(property)
+        return property[containedValue]?
+      else
+        # Fallback if this not an complex object - check for equality
+        return property == containedValue
+
+  ##
   # Returns all nodes that match the query.
   # To make this query re-usable, the array is cloned
   resultNodes: =>

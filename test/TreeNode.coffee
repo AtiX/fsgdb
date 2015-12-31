@@ -67,8 +67,10 @@ describe 'TreeNode', ->
 
     parent.setProperty 'p', 0
     parent.setProperty 'a', 1
+    parent.setProperty 'bool', true
     child.setProperty 'a', 2
     child.setProperty 'c', 3
+    child.setProperty 'bool', false
 
     merged = child.flattenProperties 'childWins'
 
@@ -76,6 +78,7 @@ describe 'TreeNode', ->
       p: 0
       a: 2
       c: 3
+      bool: false
     }
 
     expect(merged).to.eql(expectedMerged)
@@ -86,8 +89,10 @@ describe 'TreeNode', ->
 
     parent.setProperty 'p', 0
     parent.setProperty 'a', 1
+    parent.setProperty 'bool', true
     child.setProperty 'a', 2
     child.setProperty 'c', 3
+    child.setProperty 'bool', false
 
     merged = child.flattenProperties 'parentWins'
 
@@ -95,6 +100,7 @@ describe 'TreeNode', ->
       p: 0
       a: 1
       c: 3
+      bool: true
     }
 
     expect(merged).to.eql(expectedMerged)

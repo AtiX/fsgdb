@@ -87,7 +87,7 @@ module.exports = class TreeNode
       return childValue
 
     # Basic objects like strings and numbers are overwritten
-    if underscore.isString(childValue) or underscore.isNumber(childValue)
+    if underscore.isString(childValue) or underscore.isNumber(childValue) or underscore.isBoolean(childValue)
       if mergeStrategy == 'childWins'
         return childValue
       else

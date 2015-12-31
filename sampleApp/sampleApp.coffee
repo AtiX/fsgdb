@@ -1,12 +1,14 @@
-# For now, only a test script that logs the created graph to the console
+# This sample application demos some functionality of the fsgdb
 
+# 1.) Initialize the Database from a directory, register all parsers and load all files.
 FileSystemGraphDatabase = require '../src/FileSystemGraphDatabase'
-
 graph = new FileSystemGraphDatabase({ path: './sampleApp/sampleData'})
 graph.registerParser('MarkdownParser')
 graph.registerParser('YamlParser')
-graph.load()
-.then (rootNode) ->
+graphPromise = graph.load()
+
+# 2.) After having loaded everything, print the graph to stdout
+graphPromise = graphPromise.then (rootNode) ->
   console.log 'All nodes as a tree:'
   console.log ''
   printTree 0, rootNode
@@ -21,6 +23,8 @@ graph.load()
   for doc in documents
     console.log JSON.stringify(doc)
     console.log ''
+
+  return rootNode
 
 # Print the created tree somehow nicely
 printTree = (indentation, node) ->
@@ -54,3 +58,24 @@ getSpaces = (num) ->
   for i in [0..num]
     str += '   |'
   return str
+
+# 3.) Then, execute some queries
+graphPromise = graphPromise.then (rootNode) ->
+  console.log "Executing queries:"
+
+  Query = require '../src/Query'
+
+  q = new Query(rootNode)
+  rootTagFilter = q.filter( (properties) -> properties.tags? && properties.tags.indexOf("rootTag") >= 0 )
+  tagAFilter = rootTagFilter.filter( (properties) -> properties.tags? && properties.tags.indexOf("a") >= 0 )
+
+  leaves = rootTagFilter.resultLeaves()
+  console.log "When merging properties, there are #{leaves.length} nodes that have the 'rootTag' tag"
+
+  leaves = tagAFilter.resultLeaves()
+  console.log "When merging properties, there are #{leaves.length} nodes that have both the 'rootTag' and 'a' tags"
+
+# 4.) Catch errors
+graphPromise.catch (error) ->
+  console.error "Got an error:"
+  console.error error

@@ -34,12 +34,12 @@ module.exports = class Query
     for node in @nodes
       filterNode(node)
 
-    # Push this filter to the chain
+    # Push this filter to the chain for the new query
     # (Needed when getting all leaves)
-    @filterChain.push filterCallback
+    newFilterChain = underscore.clone(@filterChain)
+    newFilterChain.push filterCallback
 
-    # Build up new query so that this one can be re-used
-    return new Query(matchingNodes, underscore.clone(@filterChain))
+    return new Query(matchingNodes, newFilterChain)
 
   ##
   # Returns all nodes that match the query.

@@ -33,11 +33,12 @@ describe 'Query', ->
     cb1 = -> return true
     cb2 = -> return true
 
-    q = q.filter(cb1).filter(cb2)
+    q1 = q.filter(cb1).filter(cb2)
 
-    expect(q.filterChain.length).to.eql(2)
-    expect(q.filterChain[0]).to.eql(cb1)
-    expect(q.filterChain[1]).to.eql(cb2)
+    expect(q.filterChain.length).to.equal(0)
+    expect(q1.filterChain.length).to.equal(2)
+    expect(q1.filterChain[0]).to.equal(cb1)
+    expect(q1.filterChain[1]).to.equal(cb2)
 
   it 'should return resultNodes correctly', ->
     q = basicQuery()

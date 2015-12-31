@@ -1,7 +1,7 @@
 {
   "name": "fsgdb",
   "description": "A file system graph database",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "maintainers": [
     {
       "name": "Arthur Silber",
@@ -22,7 +22,7 @@
   "scripts": {
     "test": "./node_modules/.bin/mocha --bail --compilers coffee:coffee-script/register --recursive",
     "document": "./node_modules/.bin/crojsdoc",
-    "start":"node ./sampleApp/main.js"
+    "start": "node ./sampleApp/main.js"
   },
   "dependencies": {
     "chai": "3.4.0",

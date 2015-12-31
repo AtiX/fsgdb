@@ -21,7 +21,8 @@
   },
   "scripts": {
     "test": "./node_modules/.bin/mocha --bail --compilers coffee:coffee-script/register --recursive",
-    "document": "./node_modules/.bin/crojsdoc"
+    "document": "./node_modules/.bin/crojsdoc",
+    "start":"node ./sampleApp/main.js"
   },
   "dependencies": {
     "chai": "3.4.0",

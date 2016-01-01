@@ -4,16 +4,28 @@ fs = require 'fs'
 path = require 'path'
 
 ExifImage = require('exif').ExifImage
+gm = require 'gm'
 
 ##
 # Parses images and tries to load metadata information from them.
 # Adds helper method to access the image content directly
+# Constructor options and defaults:
+# createThumbnails: false
+# thumbnailSize: 400
+# thumbnailQuality: 70
 module.exports = class ImageParser extends Parser
 
   ##
   # As for now, only parse jpg images
   doesParse: (filename) ->
-    return Parser.hasExtension filename, ['jpg']
+    if not Parser.hasExtension filename, ['jpg']
+      return false
+
+    # Don't re-parse auto generated thumbnails
+    if filename.indexOf('.thumbnail.jpg', filename.length - 14) != -1
+      return false
+
+    return true
 
   ##
   # Parses the image (exif information) and adds functions to actually load the file content
@@ -30,6 +42,11 @@ module.exports = class ImageParser extends Parser
       p = @loadExifData(filename)
       p = p.then (exifData) ->
         imageEntry.exifData = exifData
+
+      # If desired by the user, create a thumbnail
+      if @options.createThumbnails
+        p = p.then =>
+          @createThumbnail filename, imageEntry
 
       # Attach functions to return the image content
       imageEntry.getImageData = () => return @returnImageData(filename)
@@ -54,6 +71,29 @@ module.exports = class ImageParser extends Parser
       catch error
         reject(error)
         return
+
+  createThumbnail: (filename, imageEntry) =>
+    return new Promise (resolve, reject) =>
+      thumbnailSize = @options.thumbnailSize or 300
+      thumbnailQuality = @options.thumbnailQuality or 70
+
+      thumbnailFilename = filename + '.thumbnail.jpg'
+
+      gm(filename)
+      .resize(thumbnailSize, thumbnailSize)
+      .noProfile()
+      .quality(thumbnailQuality)
+      .compress('JPEG')
+      .write thumbnailFilename, (err) =>
+        if err?
+          reject(err)
+          return
+
+        imageEntry.thumbnail = {
+          filename: thumbnailFilename
+          getImageData: () => return @returnImageData(thumbnailFilename)
+        }
+        resolve()
 
   ##
   # Load and cache image data

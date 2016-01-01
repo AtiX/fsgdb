@@ -52,3 +52,28 @@ describe 'ImageParser', ->
       .catch (error) -> done (error)
     .catch (error) -> done(error)
 
+  it 'should generate a thumbnail if configured to do so', (done) ->
+    # Copy test image
+    fs.createReadStream('./test/ImageParserTest.jpg').pipe(fs.createWriteStream(path.join(testPath ,'testImage.jpg')));
+
+    node = new TreeNode()
+    parser = new ImageParser({createThumbnail: true})
+
+    parser.parse(path.join(testPath, 'testImage.jpg'), node)
+    .then ->
+      # Expect a thumbnail sub-property per image
+      imageProperty = node.getProperty 'images'
+      image = imageProperty.testImage
+
+      expect(image.thumbnail).not.to.be.null
+      expect(image.thumbnail.filename).not.to.be.null
+
+      # Expect actual data when requesting thumbnail
+      # (Since the exact image size might differ depending on the gm installation, use a range to test)
+      image.thumbnail.getImageData()
+      .then (imageData) ->
+        expect(imageData.length > 1000 and imageData.length < 3000).to.be.true
+        done()
+      .catch (error) -> done (error)
+    .catch (error) -> done(error)
+

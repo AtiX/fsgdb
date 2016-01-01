@@ -36,12 +36,15 @@ describe 'ImageParser', ->
 
     parser.parse(path.join(testPath, 'testImage.jpg'), node)
     .then ->
+      # Expect an image property with the testImage key and exif data
       expect(node.hasProperty('images')).to.be.true
       imageProperty = node.getProperty 'images'
 
       image = imageProperty.testImage
-      expect(image.exifData).to.not.be.null
+      expect(image).not.to.be.null
+      expect(image.exifData).not.to.be.null
 
+      # Expect Actual data when requesting it
       image.getImageData()
       .then (imageData) ->
         expect(imageData.length).to.eql(9371)

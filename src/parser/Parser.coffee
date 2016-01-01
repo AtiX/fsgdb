@@ -6,6 +6,11 @@
 module.exports = class Parser
 
   ##
+  # Save options to be used when parsing
+  constructor: (options = {}) ->
+    @options = options
+
+  ##
   # Parses one file
   # @param {String} filename Full path to the file to be parsed
   # @param {Object} dirNode Object to attach extracted information to

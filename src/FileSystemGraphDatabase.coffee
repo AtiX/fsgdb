@@ -16,12 +16,13 @@ module.exports = class FileSystemGraphDatabase
   # All registerd parsers are then used when load()-ing files from
   # disk.
   # @param {FileParser} parserInstance the instance of the parser - or class name, if the parser requires no manual initialization
-  registerParser: (parserInstance) ->
+  # @param {Object} parserOptions additional options when initializing the parser via class name
+  registerParser: (parserInstance, parserOptions = {}) ->
     if 'string' == typeof parserInstance
       # Try to require class and instanciate
       try
         ParserClass = require './parser/' + parserInstance
-        @parserInstances.push new ParserClass()
+        @parserInstances.push new ParserClass(parserOptions)
         return
       catch e
         throw new Error("Unable to load parser by class name: #{e}")

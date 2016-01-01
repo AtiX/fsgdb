@@ -3,6 +3,16 @@
   "description": "A file system graph database",
   "version": "0.3.0",
   "license": "mit",
+  "keywords": [
+    "cms",
+    "database",
+    "graph",
+    "file",
+    "filesystem",
+    "markdown",
+    "yaml",
+    "image"
+  ],
   "maintainers": [
     {
       "name": "Arthur Silber",

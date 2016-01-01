@@ -17,7 +17,9 @@ At the moment, the following parsers are supported:
  - **markdown**: Parses markdown (```*.md```) files and attaches the parsed HTML content to each ```node.markdown.<filename> = "<parsedMarkdown>"```
  - **yaml**: Parses yaml (```*.yml```) files and attaches the parsed properties to each ```node.<filename> = { <parsedProperties> }```,
  with the exception that the properties of the file ```metadata.yml``` are added directly to the node without the in-between ```<filename>``` object.
-
+ - **images**: Parses jpeg (```*.jpg```) files, reads out exif information and creates (if configured with ```createThumbnails: true```) thumbnails.
+ Adds helper functions that return image/thumbnail data. Note that for generating thumbnails, GraphicsMagick/ImageMagick needs to be installed on the system.
+ 
 ## Usage
 Hint: although the examples here are written in coffeescript, the module works with javascript as well.
 

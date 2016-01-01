@@ -57,7 +57,7 @@ describe 'ImageParser', ->
     fs.createReadStream('./test/ImageParserTest.jpg').pipe(fs.createWriteStream(path.join(testPath ,'testImage.jpg')));
 
     node = new TreeNode()
-    parser = new ImageParser({createThumbnail: true})
+    parser = new ImageParser({createThumbnails: true})
 
     parser.parse(path.join(testPath, 'testImage.jpg'), node)
     .then ->

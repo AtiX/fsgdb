@@ -5,6 +5,7 @@ FileSystemGraphDatabase = require '../src/FileSystemGraphDatabase'
 graph = new FileSystemGraphDatabase({ path: './sampleApp/sampleData'})
 graph.registerParser('MarkdownParser')
 graph.registerParser('YamlParser')
+graph.registerParser('ImageParser', {createThumbnails: true})
 graphPromise = graph.load()
 
 # 2.) After having loaded everything, print the graph to stdout
